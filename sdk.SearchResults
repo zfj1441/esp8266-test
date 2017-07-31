@@ -1,0 +1,76 @@
+---- GPIO_ID_PIN Matches (75 in 15 files) ----
+Eagle_soc.h (include):#define GPIO_ID_PIN(n)                                   (GPIO_ID_PIN0+(n))
+Eagle_soc.h (include):#define GPIO_LAST_REGISTER_ID                GPIO_ID_PIN(15)
+Gpio.h (include):    ((reg_id >= GPIO_ID_PIN0) && (reg_id <= GPIO_ID_PIN(GPIO_PIN_COUNT-1)))
+I2c_master.c (app\driver):    sda_out = GPIO_INPUT_GET(GPIO_ID_PIN(I2C_MASTER_SDA_GPIO));
+I2c_master.c (app\driver):    GPIO_REG_WRITE(GPIO_PIN_ADDR(GPIO_ID_PIN(I2C_MASTER_SDA_GPIO)), GPIO_REG_READ(GPIO_PIN_ADDR(GPIO_ID_PIN(I2C_MASTER_SDA_GPIO))) | GPIO_PIN_PAD_DRIVER_SET(GPIO_PAD_DRIVER_ENABLE)); //open drain;
+I2c_master.c (app\driver):    GPIO_REG_WRITE(GPIO_PIN_ADDR(GPIO_ID_PIN(I2C_MASTER_SCL_GPIO)), GPIO_REG_READ(GPIO_PIN_ADDR(GPIO_ID_PIN(I2C_MASTER_SCL_GPIO))) | GPIO_PIN_PAD_DRIVER_SET(GPIO_PAD_DRIVER_ENABLE)); //open drain;
+I2c_master.c (examples\driver_lib\driver):    sda_out = GPIO_INPUT_GET(GPIO_ID_PIN(I2C_MASTER_SDA_GPIO));
+I2c_master.c (examples\driver_lib\driver):    GPIO_REG_WRITE(GPIO_PIN_ADDR(GPIO_ID_PIN(I2C_MASTER_SDA_GPIO)), GPIO_REG_READ(GPIO_PIN_ADDR(GPIO_ID_PIN(I2C_MASTER_SDA_GPIO))) | GPIO_PIN_PAD_DRIVER_SET(GPIO_PAD_DRIVER_ENABLE)); //open drain;
+I2c_master.c (examples\driver_lib\driver):    GPIO_REG_WRITE(GPIO_PIN_ADDR(GPIO_ID_PIN(I2C_MASTER_SCL_GPIO)), GPIO_REG_READ(GPIO_PIN_ADDR(GPIO_ID_PIN(I2C_MASTER_SCL_GPIO))) | GPIO_PIN_PAD_DRIVER_SET(GPIO_PAD_DRIVER_ENABLE)); //open drain;
+I2c_master.c (examples\iot_demo\driver):    sda_out = GPIO_INPUT_GET(GPIO_ID_PIN(I2C_MASTER_SDA_GPIO));
+I2c_master.c (examples\iot_demo\driver):    GPIO_REG_WRITE(GPIO_PIN_ADDR(GPIO_ID_PIN(I2C_MASTER_SDA_GPIO)), GPIO_REG_READ(GPIO_PIN_ADDR(GPIO_ID_PIN(I2C_MASTER_SDA_GPIO))) | GPIO_PIN_PAD_DRIVER_SET(GPIO_PAD_DRIVER_ENABLE)); //open drain;
+I2c_master.c (examples\iot_demo\driver):    GPIO_REG_WRITE(GPIO_PIN_ADDR(GPIO_ID_PIN(I2C_MASTER_SCL_GPIO)), GPIO_REG_READ(GPIO_PIN_ADDR(GPIO_ID_PIN(I2C_MASTER_SCL_GPIO))) | GPIO_PIN_PAD_DRIVER_SET(GPIO_PAD_DRIVER_ENABLE)); //open drain;
+Key.c (app\driver):        gpio_output_set(0, 0, 0, GPIO_ID_PIN(keys->single_key[i]->gpio_id));
+Key.c (app\driver):        gpio_pin_intr_state_set(GPIO_ID_PIN(keys->single_key[i]->gpio_id), GPIO_PIN_INTR_NEGEDGE);
+Key.c (app\driver):    if (0 == GPIO_INPUT_GET(GPIO_ID_PIN(single_key->gpio_id))) {
+Key.c (app\driver):    if (1 == GPIO_INPUT_GET(GPIO_ID_PIN(single_key->gpio_id))) {
+Key.c (app\driver):        gpio_pin_intr_state_set(GPIO_ID_PIN(single_key->gpio_id), GPIO_PIN_INTR_NEGEDGE);
+Key.c (app\driver):        gpio_pin_intr_state_set(GPIO_ID_PIN(single_key->gpio_id), GPIO_PIN_INTR_POSEDGE);
+Key.c (app\driver):            gpio_pin_intr_state_set(GPIO_ID_PIN(keys->single_key[i]->gpio_id), GPIO_PIN_INTR_DISABLE);
+Key.c (app\driver):                gpio_pin_intr_state_set(GPIO_ID_PIN(keys->single_key[i]->gpio_id), GPIO_PIN_INTR_POSEDGE);
+Key.c (app\old\driver):        gpio_output_set(0, 0, 0, GPIO_ID_PIN(keys->single_key[i]->gpio_id));
+Key.c (app\old\driver):        gpio_pin_intr_state_set(GPIO_ID_PIN(keys->single_key[i]->gpio_id), GPIO_PIN_INTR_NEGEDGE);
+Key.c (app\old\driver):    if (0 == GPIO_INPUT_GET(GPIO_ID_PIN(single_key->gpio_id))) {
+Key.c (app\old\driver):    if (1 == GPIO_INPUT_GET(GPIO_ID_PIN(single_key->gpio_id))) {
+Key.c (app\old\driver):        gpio_pin_intr_state_set(GPIO_ID_PIN(single_key->gpio_id), GPIO_PIN_INTR_NEGEDGE);
+Key.c (app\old\driver):        gpio_pin_intr_state_set(GPIO_ID_PIN(single_key->gpio_id), GPIO_PIN_INTR_POSEDGE);
+Key.c (app\old\driver):            gpio_pin_intr_state_set(GPIO_ID_PIN(keys->single_key[i]->gpio_id), GPIO_PIN_INTR_DISABLE);
+Key.c (app\old\driver):                gpio_pin_intr_state_set(GPIO_ID_PIN(keys->single_key[i]->gpio_id), GPIO_PIN_INTR_POSEDGE);
+Key.c (examples\driver_lib\driver):        gpio_output_set(0, 0, 0, GPIO_ID_PIN(keys->single_key[i]->gpio_id));
+Key.c (examples\driver_lib\driver):        gpio_pin_intr_state_set(GPIO_ID_PIN(keys->single_key[i]->gpio_id), GPIO_PIN_INTR_NEGEDGE);
+Key.c (examples\driver_lib\driver):    if (0 == GPIO_INPUT_GET(GPIO_ID_PIN(single_key->gpio_id))) {
+Key.c (examples\driver_lib\driver):    if (1 == GPIO_INPUT_GET(GPIO_ID_PIN(single_key->gpio_id))) {
+Key.c (examples\driver_lib\driver):        gpio_pin_intr_state_set(GPIO_ID_PIN(single_key->gpio_id), GPIO_PIN_INTR_NEGEDGE);
+Key.c (examples\driver_lib\driver):        gpio_pin_intr_state_set(GPIO_ID_PIN(single_key->gpio_id), GPIO_PIN_INTR_POSEDGE);
+Key.c (examples\driver_lib\driver):            gpio_pin_intr_state_set(GPIO_ID_PIN(keys->single_key[i]->gpio_id), GPIO_PIN_INTR_DISABLE);
+Key.c (examples\driver_lib\driver):                gpio_pin_intr_state_set(GPIO_ID_PIN(keys->single_key[i]->gpio_id), GPIO_PIN_INTR_POSEDGE);
+Key.c (examples\iot_demo\driver):        gpio_output_set(0, 0, 0, GPIO_ID_PIN(keys->single_key[i]->gpio_id));
+Key.c (examples\iot_demo\driver):        gpio_pin_intr_state_set(GPIO_ID_PIN(keys->single_key[i]->gpio_id), GPIO_PIN_INTR_NEGEDGE);
+Key.c (examples\iot_demo\driver):    if (0 == GPIO_INPUT_GET(GPIO_ID_PIN(single_key->gpio_id))) {
+Key.c (examples\iot_demo\driver):    if (1 == GPIO_INPUT_GET(GPIO_ID_PIN(single_key->gpio_id))) {
+Key.c (examples\iot_demo\driver):        gpio_pin_intr_state_set(GPIO_ID_PIN(single_key->gpio_id), GPIO_PIN_INTR_NEGEDGE);
+Key.c (examples\iot_demo\driver):        gpio_pin_intr_state_set(GPIO_ID_PIN(single_key->gpio_id), GPIO_PIN_INTR_POSEDGE);
+Key.c (examples\iot_demo\driver):            gpio_pin_intr_state_set(GPIO_ID_PIN(keys->single_key[i]->gpio_id), GPIO_PIN_INTR_DISABLE);
+Key.c (examples\iot_demo\driver):                gpio_pin_intr_state_set(GPIO_ID_PIN(keys->single_key[i]->gpio_id), GPIO_PIN_INTR_POSEDGE);
+Key.c (examples\wps\driver):        gpio_output_set(0, 0, 0, GPIO_ID_PIN(keys->single_key[i]->gpio_id));
+Key.c (examples\wps\driver):        gpio_pin_intr_state_set(GPIO_ID_PIN(keys->single_key[i]->gpio_id), GPIO_PIN_INTR_NEGEDGE);
+Key.c (examples\wps\driver):    if (0 == GPIO_INPUT_GET(GPIO_ID_PIN(single_key->gpio_id))) {
+Key.c (examples\wps\driver):    if (1 == GPIO_INPUT_GET(GPIO_ID_PIN(single_key->gpio_id))) {
+Key.c (examples\wps\driver):        gpio_pin_intr_state_set(GPIO_ID_PIN(single_key->gpio_id), GPIO_PIN_INTR_NEGEDGE);
+Key.c (examples\wps\driver):        gpio_pin_intr_state_set(GPIO_ID_PIN(single_key->gpio_id), GPIO_PIN_INTR_POSEDGE);
+Key.c (examples\wps\driver):            gpio_pin_intr_state_set(GPIO_ID_PIN(keys->single_key[i]->gpio_id), GPIO_PIN_INTR_DISABLE);
+Key.c (examples\wps\driver):                gpio_pin_intr_state_set(GPIO_ID_PIN(keys->single_key[i]->gpio_id), GPIO_PIN_INTR_POSEDGE);
+User_main.c (app\old\user):		GPIO_OUTPUT_SET(GPIO_ID_PIN(2), 1);
+User_main.c (app\old\user):	GPIO_DIS_OUTPUT(GPIO_ID_PIN(2));
+User_main.c (app\old\user):	gpio_pin_intr_state_set(GPIO_ID_PIN(2), GPIO_PIN_INTR_NEGEDGE);
+User_plug.c (app\user):    GPIO_OUTPUT_SET(GPIO_ID_PIN(PLUG_LINK_LED_IO_NUM), level);
+User_plug.c (app\user):    GPIO_OUTPUT_SET(GPIO_ID_PIN(PLUG_LINK_LED_IO_NUM), link_led_level);
+User_plug.c (app\user):    GPIO_OUTPUT_SET(GPIO_ID_PIN(PLUG_LINK_LED_IO_NUM), link_led_level);
+User_plug.c (app\user):    GPIO_OUTPUT_SET(GPIO_ID_PIN(PLUG_LINK_LED_IO_NUM), 0);
+User_plug.c (examples\iot_demo\user):    GPIO_OUTPUT_SET(GPIO_ID_PIN(PLUG_LINK_LED_IO_NUM), level);
+User_plug.c (examples\iot_demo\user):    GPIO_OUTPUT_SET(GPIO_ID_PIN(PLUG_LINK_LED_IO_NUM), link_led_level);
+User_plug.c (examples\iot_demo\user):    GPIO_OUTPUT_SET(GPIO_ID_PIN(PLUG_LINK_LED_IO_NUM), link_led_level);
+User_plug.c (examples\iot_demo\user):    GPIO_OUTPUT_SET(GPIO_ID_PIN(PLUG_LINK_LED_IO_NUM), 0);
+User_sensor.c (app\user):    GPIO_OUTPUT_SET(GPIO_ID_PIN(SENSOR_UNUSED_LED_IO_NUM), 0);
+User_sensor.c (app\user):    GPIO_OUTPUT_SET(GPIO_ID_PIN(SENSOR_LINK_LED_IO_NUM), level);
+User_sensor.c (app\user):    GPIO_OUTPUT_SET(GPIO_ID_PIN(SENSOR_LINK_LED_IO_NUM), link_led_level);
+User_sensor.c (app\user):    GPIO_OUTPUT_SET(GPIO_ID_PIN(SENSOR_LINK_LED_IO_NUM), link_led_level);
+User_sensor.c (app\user):    GPIO_OUTPUT_SET(GPIO_ID_PIN(SENSOR_LINK_LED_IO_NUM), 0);
+User_sensor.c (app\user):        if (GPIO_INPUT_GET(GPIO_ID_PIN(SENSOR_KEY_IO_NUM)) == 0) {
+User_sensor.c (examples\iot_demo\user):    GPIO_OUTPUT_SET(GPIO_ID_PIN(SENSOR_UNUSED_LED_IO_NUM), 0);
+User_sensor.c (examples\iot_demo\user):    GPIO_OUTPUT_SET(GPIO_ID_PIN(SENSOR_LINK_LED_IO_NUM), level);
+User_sensor.c (examples\iot_demo\user):    GPIO_OUTPUT_SET(GPIO_ID_PIN(SENSOR_LINK_LED_IO_NUM), link_led_level);
+User_sensor.c (examples\iot_demo\user):    GPIO_OUTPUT_SET(GPIO_ID_PIN(SENSOR_LINK_LED_IO_NUM), link_led_level);
+User_sensor.c (examples\iot_demo\user):    GPIO_OUTPUT_SET(GPIO_ID_PIN(SENSOR_LINK_LED_IO_NUM), 0);
+User_sensor.c (examples\iot_demo\user):        if (GPIO_INPUT_GET(GPIO_ID_PIN(SENSOR_KEY_IO_NUM)) == 0) {
