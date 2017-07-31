@@ -20,33 +20,48 @@
 #include "user_esp_platform.h"
 #endif
 
-int zt=0;
+LOCAL int zt=0;
 
 void user_rf_pre_init(void)
 {
 }
 
-LOCAL void ICACHE_FLASH_ATTR
-user_plug_long_press(void)
+void ICACHE_FLASH_ATTR
+short_press(void)
 {
-	user_esp_platform_set_active(0);
-    system_restore();
-    system_restart();
+	uint32 gpio_status = GPIO_REG_READ(GPIO_STATUS_ADDRESS);
+	if (gpio_status & BIT(0)) 
+	{
+		//disable interrupt
+	        gpio_pin_intr_state_set(GPIO_ID_PIN(0), GPIO_PIN_INTR_DISABLE);
+		if(GPIO_INPUT_GET(0)==1)
+			GPIO_OUTPUT_SET(GPIO_ID_PIN(2), 1);
+		else
+			GPIO_OUTPUT_SET(GPIO_ID_PIN(2), 0);
+		//clear interrupt status
+		GPIO_REG_WRITE(GPIO_STATUS_W1TC_ADDRESS, gpio_status & BIT(0));
+	}
 }
 
-LOCAL void ICACHE_FLASH_ATTR
-user_plug_short_press(void)
+static
+void gpio_intr_handler()
 {
-	if(zt == 0)
-	{
-		GPIO_OUTPUT_SET(GPIO_ID_PIN(2), 1);
-		zt = 1;
-	}
-	else
-	{
-		GPIO_OUTPUT_SET(GPIO_ID_PIN(2), 0);
-		zt = 0;
-	}
+    uint32 gpio_status = GPIO_REG_READ(GPIO_STATUS_ADDRESS);
+    GPIO_REG_WRITE(GPIO_STATUS_W1TC_ADDRESS, gpio_status);
+
+    if(gpio_status & (BIT(0)))
+    {
+		if(zt == 1)
+		{
+			GPIO_OUTPUT_SET(GPIO_ID_PIN(2), 0);
+			zt = 0;
+		}
+		else
+		{
+			GPIO_OUTPUT_SET(GPIO_ID_PIN(2), 1);
+			zt = 1;
+		}
+    }
 }
 
 /******************************************************************************
@@ -58,21 +73,22 @@ user_plug_short_press(void)
 void user_init(void)
 {
 	//set wifi 
-	struct station_config  stConfig;
-	os_memcpy(stConfig.ssid, SSID, os_strlen(SSID));
-	os_memcpy(stConfig.password, PASSWORD, os_strlen(PASSWORD));
-	wifi_set_opmode(STATIONAP_MODE);
-	wifi_station_set_config(&stConfig);
-	
-	// key gpio0 init;
-	struct keys_param keys;
-	struct single_key_param *single_key[PLUG_KEY_NUM];
-	single_key[0] = key_init_single(PLUG_WIFI_LED_IO_NUM, PERIPHS_IO_MUX_GPIO0_U, FUNC_GPIO0,
-                                    user_plug_long_press, user_plug_short_press);
-	keys.key_num = PLUG_KEY_NUM;
-	keys.single_key = single_key;
-	key_init(&keys);
-	
+	wifi_set_opmode(STATION_MODE);
+        struct station_config stConf;
+        stConf.bssid_set = 0; //need not check MAC address of AP
+        os_memcpy(&stConf.ssid, SSID, 32);
+        os_memcpy(&stConf.password, PASSWORD, 64);
+        wifi_station_set_config(&stConf);
+
+	gpio_init();
+	PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO0_U, FUNC_GPIO0);
+	GPIO_DIS_OUTPUT(GPIO_ID_PIN(0));
+	PIN_PULLUP_EN(PERIPHS_IO_MUX_GPIO0_U);
+	ETS_GPIO_INTR_DISABLE();
+	ETS_GPIO_INTR_ATTACH(&gpio_intr_handler, NULL);
+	gpio_pin_intr_state_set(GPIO_ID_PIN(0), GPIO_PIN_INTR_LOLEVEL);
+	ETS_GPIO_INTR_ENABLE();
+
 	// led gpio2 init;
 	PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO2_U, FUNC_GPIO2);
 	GPIO_OUTPUT_SET(GPIO_ID_PIN(2), 0);
