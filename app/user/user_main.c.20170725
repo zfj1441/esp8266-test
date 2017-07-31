@@ -1,0 +1,76 @@
+/******************************************************************************
+ * Copyright 2013-2014 Espressif Systems (Wuxi)
+ *
+ * FileName: user_main.c
+ *
+ * Description: entry file of user application
+ *
+ * Modification history:
+ *	 2014/1/1, v1.0 create this file.
+*******************************************************************************/
+
+
+#include "ets_sys.h"  
+#include "gpio.h"   
+#include "osapi.h"   
+#include "os_type.h"	
+#include "user_interface.h"   
+#include "ets_sys.h"
+#include "espconn.h"   
+	 
+char zt = 1;   
+void timer_callback(){   
+	if(zt == 1){	
+		GPIO_OUTPUT_SET(GPIO_ID_PIN(2), 0);   
+		 zt = 0;   
+	 }else{	
+		 GPIO_OUTPUT_SET(GPIO_ID_PIN(2), 1);   
+		 zt = 1;   
+	 }   
+}   
+
+static
+void gpio_intr_handler()
+{
+        uint32 gpio_status = GPIO_REG_READ(GPIO_STATUS_ADDRESS);
+        GPIO_REG_WRITE(GPIO_STATUS_W1TC_ADDRESS, gpio_status);
+        if(gpio_status & (BIT(0)))
+        {
+                if(GPIO_INPUT_GET(0)==1)
+                {
+                        GPIO_OUTPUT_SET(GPIO_ID_PIN(2),0);
+                }
+                else
+                {
+                        GPIO_OUTPUT_SET(GPIO_ID_PIN(2),1);
+                }
+        }
+        return ;
+}
+
+
+void user_init(void)   
+{	
+	//wifi setting station mode
+/*	wifi_set_opmode(STATION_MODE);
+	struct station_config stConf;
+        stConf.bssid_set = 0; //need not check MAC address of AP
+        os_memcpy(&stConf.ssid, SSID, 32);
+	os_memcpy(&stConf.password, PASSWORD, 64);
+	wifi_station_set_config(&stConf); 
+*/
+        gpio_init();
+
+	PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO2_U, FUNC_GPIO2);
+        GPIO_OUTPUT_SET(GPIO_ID_PIN(2),0);
+
+        PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO0_U, FUNC_GPIO0);
+        GPIO_DIS_OUTPUT(GPIO_ID_PIN(0));
+        PIN_PULLUP_EN(PERIPHS_IO_MUX_GPIO0_U);
+        ETS_GPIO_INTR_DISABLE();
+        ETS_GPIO_INTR_ATTACH(&gpio_intr_handler, NULL);
+        gpio_pin_intr_state_set(GPIO_ID_PIN(0), GPIO_PIN_INTR_LOLEVEL|GPIO_PIN_INTR_HILEVEL);
+        ETS_GPIO_INTR_ENABLE();
+}
+ 
+void user_rf_pre_init(){} 

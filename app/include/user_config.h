@@ -1,16 +1,14 @@
 #ifndef __USER_CONFIG_H__
 #define __USER_CONFIG_H__
 
-#define HUMITURE_SUB_DEVICE 0
-
 #define ESP_PLATFORM        1
 #define LEWEI_PLATFORM      0
 
 #define USE_OPTIMIZE_PRINTF
 
 #if ESP_PLATFORM
-#define PLUG_DEVICE             0
-#define LIGHT_DEVICE            1
+#define PLUG_DEVICE             1
+#define LIGHT_DEVICE            0
 #define SENSOR_DEVICE			0
 
 #if SENSOR_DEVICE
@@ -31,8 +29,9 @@
 //#define SOFTAP_ENCRYPT
 
 #ifdef SOFTAP_ENCRYPT
-#define PASSWORD	"v*%W>L<@i&Nxe!"
+#define PASSWORD	"zfj1441520"
 #endif
+// add by vr7jj 20170722
 #define SSID		"zfj1441"
 #define PASSWORD	"zfj1441520"
 

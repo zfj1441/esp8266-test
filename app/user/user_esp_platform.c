@@ -1361,8 +1361,16 @@ user_esp_platform_init(void)
 
         wifi_softap_set_config(&config);
 #endif
-
-        wifi_set_opmode(STATIONAP_MODE);
+//add by vr7jj 20170722
+//       wifi_set_opmode(STATIONAP_MODE);
+        wifi_set_opmode(STATION_MODE);
+	char ssid[32] = SSID;
+	char password[64] = PASSWORD;
+	struct station_config stConf;
+        stConf.bssid_set = 0; //need not check MAC address of AP
+        os_memcpy(&stConf.ssid, ssid, 32);
+	os_memcpy(&stConf.password, password, 64);
+	wifi_station_set_config(&stConf); 
     }
 
 #if PLUG_DEVICE
