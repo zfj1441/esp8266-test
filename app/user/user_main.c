@@ -70,7 +70,7 @@ void Espconn_MutliDisFn(void *arg)
 
 void Espconn_MutliRecvFn(void *arg, char *pdata, unsigned short len)
 {
-	int	iArraySize = 0, index = 0;
+	int		iArraySize = 0, index = 0;
 	char	szRet[1460], tmp[10];
 	char	*out;
 	cJSON	*json, *root, *outJosn;
@@ -84,15 +84,42 @@ void Espconn_MutliRecvFn(void *arg, char *pdata, unsigned short len)
 	}
 	else
 	{
-		int j = 0;
-		for(j = 0; j < 1; j++)
-		{
+		do {
+			item=cJSON_GetObjectItem(json, "method");
+			if(!item) {
+				os_sprintf(szRet, "json data have not an method");
+				break ;
+			}
 			itemArray=cJSON_GetObjectItem(json, "params");
-			if(!itemArray || itemArray->type != cJSON_Array )
-			{
+			if(!itemArray || itemArray->type != cJSON_Array ) {
 				os_sprintf(szRet, "params is not an array");
 				break ;
 			}
+			if(os_strcmp(item->valuestring, "get_prop") == 0) {
+				if(GPIO_INPUT_GET(2)==1)
+					os_strcat(szRet, "{\"id\":-1, \"method\":\"get_prop\", \"power\":\"on\"}");
+				else
+					os_strcat(szRet, "{\"id\":-1, \"method\":\"get_prop\", \"power\":\"off\"}");
+			}
+			else if(os_strcmp(item->valuestring, "set_power") == 0) {
+				;
+			}
+			else if(os_strcmp(item->valuestring, "set_bright") == 0) {
+				;
+			}
+			else if(os_strcmp(item->valuestring, "set_hsv") == 0) {
+				;
+			}
+			else if(os_strcmp(item->valuestring, "start_cf") == 0) {
+				;
+			}
+			else if(os_strcmp(item->valuestring, "set_name") == 0) {
+				;
+			}
+			else {
+				os_sprintf(szRet, "error method[%s]", item->valuestring);
+			}
+#if 0			
 			iArraySize = cJSON_GetArraySize(itemArray);
 			for (index = 0; index < iArraySize; index++)
 			{
@@ -106,11 +133,6 @@ void Espconn_MutliRecvFn(void *arg, char *pdata, unsigned short len)
 				{
 					if(os_strcmp(item->valuestring, "power") == 0)
 					{
-						if(GPIO_INPUT_GET(2)==1)
-							os_strcat(szRet, "{\"id\":-1, \"method\":\"get_prop\", \"power\":\"on\"}");
-						else
-							os_strcat(szRet, "{\"id\":-1, \"method\":\"get_prop\", \"power\":\"off\"}");
-						break ;	// for test vr7jj
 					}
 				}
 				else if(item->type == cJSON_Number)
@@ -126,7 +148,8 @@ void Espconn_MutliRecvFn(void *arg, char *pdata, unsigned short len)
 					break;
 				}
 			}
-		}
+#endif
+		}while(0);
 
 //		out=cJSON_Print(json);
 		cJSON_Delete(json);
@@ -167,9 +190,13 @@ void Espconn_MutliListen(void *arg)
 			return;
 		}
 		EspconnOfMutliListen->reverse = &TransportList[ListenCount];
+		//regist success send callback;
 		espconn_regist_sentcb(EspconnOfMutliListen,Espconn_MutliSendFn);
+		//regist success Receive callback;
 		espconn_regist_recvcb(EspconnOfMutliListen,Espconn_MutliRecvFn);
+		//regist normal disconnect callback;
 		espconn_regist_disconcb(EspconnOfMutliListen,Espconn_MutliDisFn);
+		//regist abnormal disconnect callback;
 		espconn_regist_reconcb(EspconnOfMutliListen,Espconn_MutliReFn);
 	}else
 		return;
@@ -267,6 +294,5 @@ void ICACHE_FLASH_ATTR user_init(void)
 	ETS_GPIO_INTR_ATTACH(&gpio_intr_handler, NULL);
 	gpio_pin_intr_state_set(GPIO_ID_PIN(0), GPIO_PIN_INTR_NEGEDGE);
 	ETS_GPIO_INTR_ENABLE();
-
-
+	return ;
 }
