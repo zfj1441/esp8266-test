@@ -43,7 +43,8 @@ void Espconn_MutliSend(char* szSendData)
 //	os_memcpy(SendBufferOfMutli, "hello world", 11);
 	for (MutliSendCount = 0; MutliSendCount < ESPCONN_MAXMUTLI; MutliSendCount ++){
 		if (TransportList[MutliSendCount].ListenFlag){			
-			espconn_send(TransportList[MutliSendCount].EspconnListen, szSendData, ESPCONN_MAXLENGTH);			
+			espconn_send(TransportList[MutliSendCount].EspconnListen, 
+				szSendData, os_strlen(szSendData));
 		}
 	}
 }
@@ -97,9 +98,9 @@ void Espconn_MutliRecvFn(void *arg, char *pdata, unsigned short len)
 			}
 			if(os_strcmp(item->valuestring, "get_prop") == 0) {
 				if(GPIO_INPUT_GET(2)==1)
-					os_strcat(szRet, "{\"id\":-1, \"method\":\"get_prop\", \"power\":\"on\"}");
+					os_strcat(szRet, "{\"id\":-1,\"method\":\"get_prop\",\"power\":\"on\"}");
 				else
-					os_strcat(szRet, "{\"id\":-1, \"method\":\"get_prop\", \"power\":\"off\"}");
+					os_strcat(szRet, "{\"id\":-1,\"method\":\"get_prop\",\"power\":\"off\"}");
 			}
 			else if(os_strcmp(item->valuestring, "set_power") == 0) {
 				;
