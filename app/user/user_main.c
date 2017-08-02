@@ -5,6 +5,7 @@
 #include "user_interface.h"
 #include "espconn.h"
 #include "gpio.h"
+#include "cJSON.h"
 
 
 LOCAL int keystat = 0;
@@ -38,13 +39,86 @@ void wifi_handle_even_cb(System_Event_t *evt)
 }
 
 void ICACHE_FLASH_ATTR
-webserver_recv(void *arg, char *pusrdata, unsigned short length)
+mytcp_recv(void *arg, char *pusrdata, unsigned short length)
 {
-	;
+	int		iArraySize = 0, index = 0;
+	char	szRet[1460], tmp[10];
+	char	*out;
+	cJSON	*json, *root, *outJosn;
+	cJSON	*itemArray, *item;
+
+	os_memset(szRet, 0, sizeof(szRet));
+	struct espconn *pesp_conn = arg;
+
+	json=cJSON_Parse(pusrdata);
+	if (!json) {
+		os_sprintf(szRet, "Error before: [%s]\n",cJSON_GetErrorPtr());
+	}
+	else
+	{
+		do {
+			item=cJSON_GetObjectItem(json, "method");
+			if(!item) {
+				os_sprintf(szRet, "json data have not an method");
+				break ;
+			}
+			itemArray=cJSON_GetObjectItem(json, "params");
+			if(!itemArray || itemArray->type != cJSON_Array ) {
+				os_sprintf(szRet, "params is not an array");
+				break ;
+			}
+			if(os_strcmp(item->valuestring, "get_prop") == 0) {
+				if(GPIO_INPUT_GET(2)==1)
+					os_strcat(szRet, "{\"id\":-1,\"method\":\"get_prop\",\"power\":\"on\"}");
+				else
+					os_strcat(szRet, "{\"id\":-1,\"method\":\"get_prop\",\"power\":\"off\"}");
+			}
+			else if(os_strcmp(item->valuestring, "set_power") == 0) {
+				item = cJSON_GetArrayItem(itemArray, 0);
+				if (NULL == item)
+				{
+					os_sprintf(szRet, "params is null");
+					break ;
+				}
+				if(item->type==cJSON_String && os_strcmp(item->valuestring, "on") == 0)
+				{
+					GPIO_OUTPUT_SET(GPIO_ID_PIN(2),1);
+					os_strcat(szRet, "{\"id\":1, \"result\":[\"on\", \"\", \"100\"]}");
+				}
+				else if(item->type==cJSON_String && os_strcmp(item->valuestring, "off") == 0)
+				{
+					GPIO_OUTPUT_SET(GPIO_ID_PIN(2),0);
+					os_strcat(szRet, "{\"id\":1, \"result\":[\"off\", \"\", \"100\"]}");
+				}
+				else
+				{
+					os_strcat(szRet, "{\"id\":1, \"result\":[\"off\", \"\", \"100\"]}");
+				}
+			}
+			else if(os_strcmp(item->valuestring, "set_bright") == 0) {
+				;
+			}
+			else if(os_strcmp(item->valuestring, "set_hsv") == 0) {
+				;
+			}
+			else if(os_strcmp(item->valuestring, "start_cf") == 0) {
+				;
+			}
+			else if(os_strcmp(item->valuestring, "set_name") == 0) {
+				;
+			}
+			else {
+				os_sprintf(szRet, "error method[%s]", item->valuestring);
+			}
+		}while(0);
+		cJSON_Delete(json);
+	}
+	espconn_send(pesp_conn, szRet, os_strlen(szRet));
+	return;
 }
 
 void ICACHE_FLASH_ATTR
-webserver_recon(void *arg, sint8 err)
+mytcp_recon(void *arg, sint8 err)
 {
 	struct espconn *pesp_conn = arg;
 
@@ -54,7 +128,7 @@ webserver_recon(void *arg, sint8 err)
 }
 
 void ICACHE_FLASH_ATTR
-webserver_discon(void *arg)
+mytcp_discon(void *arg)
 {
 	struct espconn *pesp_conn = arg;
 
@@ -64,17 +138,27 @@ webserver_discon(void *arg)
 }
 
 void ICACHE_FLASH_ATTR
-webserver_listen(void *arg)
+mytcp_listen(void *arg)
 {
+	uint32_t keeplive;
 	struct espconn *pesp_conn = arg;
-
-	espconn_regist_recvcb(pesp_conn, webserver_recv);
-	espconn_regist_reconcb(pesp_conn, webserver_recon);
-	espconn_regist_disconcb(pesp_conn, webserver_discon);
+#if 0
+//	keeplive = 2147483647; 
+	espconn_set_opt(pesp_conn, ESPCONN_KEEPALIVE);
+	keeplive = 6000; 
+	espconn_set_keepalive(pesp_conn, ESPCONN_KEEPIDLE, &keeplive); 
+	keeplive = 6000; 
+	espconn_set_keepalive(pesp_conn, ESPCONN_KEEPINTVL, &keeplive); 
+	keeplive = 6000; 
+	espconn_set_keepalive(pesp_conn, ESPCONN_KEEPCNT, &keeplive); 
+#endif
+	espconn_regist_recvcb(pesp_conn, mytcp_recv);
+	espconn_regist_reconcb(pesp_conn, mytcp_recon);
+	espconn_regist_disconcb(pesp_conn, mytcp_discon);
 }
 
 void ICACHE_FLASH_ATTR
-tcp_server(int port, espconn_connect_callback serListen)
+mytcp_server(int port, espconn_connect_callback serListen)
 {
 	LOCAL struct espconn esp_conn_ser;
 	LOCAL esp_tcp esptcp;
@@ -83,16 +167,11 @@ tcp_server(int port, espconn_connect_callback serListen)
 	esp_conn_ser.state = ESPCONN_NONE;
 	esp_conn_ser.proto.tcp = &esptcp;
 	esp_conn_ser.proto.tcp->local_port = port;
+
 	espconn_regist_connectcb(&esp_conn_ser, serListen);
 
-	sint8 ret = espconn_accept(&esp_conn_ser);
-	os_printf("%d\n", ret);
-	if(!ret){
-		os_printf("Begin to listen!!!\n");
-	}
-	else{
-		os_printf("Fail to listen!!!\n");
-	}
+	espconn_accept(&esp_conn_ser);
+	espconn_regist_time(&esp_conn_ser, 60, 0);
 }
 
 
@@ -161,17 +240,11 @@ user_init(void)
 	user_set_station_config();
 //	set wifi connect ap callback;
 //	wifi_set_event_handler_cb(wifi_handle_even_cb);
-	uint8 wifi_sat = wifi_station_get_connect_status();
-	if(wifi_sat!=STATION_GOT_IP){
-		os_printf("Wifi connect fail[%d]", wifi_sat);
-		return;
-	}
-	os_printf("Wifi connect success!");
 	
 	// start tcp server
-	tcp_server(9988, webserver_listen);
+	mytcp_server(9988, mytcp_listen);
 	
-	os_delay_us(10000);
+	os_delay_us(1000);
 
 	gpio_init();
 	PIN_FUNC_SELECT(PERIPHS_IO_MUX_GPIO2_U, FUNC_GPIO2);

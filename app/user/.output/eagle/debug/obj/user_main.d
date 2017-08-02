@@ -9,4 +9,4 @@
  ../include/user_config.h ../../include/mem.h \
  ../../include/user_interface.h ../../include/os_type.h \
  ../../include/ip_addr.h ../../include/queue.h ../../include/spi_flash.h \
- ../../include/espconn.h ../../include/gpio.h
+ ../../include/espconn.h ../../include/gpio.h ../include/cJSON.h
