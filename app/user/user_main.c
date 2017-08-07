@@ -8,6 +8,7 @@
 #include "cJSON.h"
 
 
+os_timer_t test_timer; 
 LOCAL int keystat = 0;
 
 /*
@@ -23,20 +24,6 @@ void user_set_station_config(){
 	return ;
 }
 
-/*
- * wifi callbak 
- */
-void wifi_handle_even_cb(System_Event_t *evt)
-{
-	switch(evt->event){
-		case EVENT_STAMODE_GOT_IP:
-			os_printf("Have got IP!!\n");
-			break;
-		defaut: 
-			os_printf("Have'n got IP\n");
-			break;
-	}
-}
 
 void ICACHE_FLASH_ATTR
 mytcp_recv(void *arg, char *pusrdata, unsigned short length)
@@ -174,35 +161,40 @@ mytcp_server(int port, espconn_connect_callback serListen)
 	espconn_regist_time(&esp_conn_ser, 60, 0);
 }
 
-
-#if 0
 void ICACHE_FLASH_ATTR
 user_udp_send(void)
 {
-	char hwaddr[6];
-	char DeviceBuffer[40]={0};
-	LOCAL char udp_remote_ip[1]={255,255,255,255};
+	char szData[1024];
+	LOCAL struct espconn esp_conn_udp;
+	LOCAL esp_udp user_udp;
 
-	user_udp_espconn.type=ESPCONN_UDP; 
-	user_udp_espconn.proto.udp= (esp_udp*)os_zalloc(sizeof(esp_udp)); 
-	os_memset(user_udp_espconn.proto.udp, 0, sizeof(esp_udp));
-	user_udp_espconn.proto.udp->local_port=2525; 
-	user_udp_espconn.proto.udp->remote_port=1982;
-	os_memcpy(user_udp_espconn.proto.udp->remote_ip,udp_remote_ip)
-	espconn_create(&user_udp_espconn);
+	esp_conn_udp.type=ESPCONN_UDP; 
+	esp_conn_udp.state = ESPCONN_NONE;
+	esp_conn_udp.proto.udp = &user_udp;
+	esp_conn_udp.proto.udp->remote_port=1982;
+	esp_conn_udp.proto.udp->remote_ip[0]=224;
+	esp_conn_udp.proto.udp->remote_ip[1]=0;
+	esp_conn_udp.proto.udp->remote_ip[2]=0;
+	esp_conn_udp.proto.udp->remote_ip[3]=50;
+	espconn_create(&esp_conn_udp);
 
-	wifi_get_macaddr(STATION_IF,hwaddr);
-	os_sprintf(DeviceBuffer,"设备MAC地址为"MACSTR"!!\r\n",MAC2STR(hwaddr));
-	espconn_sent(&user_udp_espconn,DeviceBuffer,os_strlen(DeviceBuffer));
+	struct ip_info ipconfig;
+	os_memset(&ipconfig, 0, sizeof(struct ip_info));
+	wifi_get_ip_info(STATION_IF, &ipconfig); 
+
+	os_memset(szData, 0, sizeof(szData));
+	os_sprintf(szData, "did: did\nLocation: http://%d.%d.%d.%d:9988\npower: %s\nbright: bright\nmodel: model\nhue: hue\nsat: sat\nname: name", 
+		IP2STR(&ipconfig.ip), GPIO_INPUT_GET(2)==0?"off":"on");
+	espconn_sent(&esp_conn_udp,szData,os_strlen(szData));
 }
 
 void ICACHE_FLASH_ATTR
-user_udp_sent_cb(void *arg){
+user_udp_sent_cb(void){
+
 	os_timer_disarm(&test_timer);
 	os_timer_setfn(&test_timer,user_udp_send,NULL);
-	os_timer_arm(&test_timer,1000,NULL);
+	os_timer_arm(&test_timer,60000,NULL);
 }
-#endif
 
 void ICACHE_FLASH_ATTR
 gpio_intr_handler()
@@ -233,16 +225,33 @@ gpio_intr_handler()
 	}
 }
 
+/*
+ * wifi callbak 
+ */
+void wifi_handle_even_cb(System_Event_t *evt)
+{
+	switch(evt->event){
+		case EVENT_STAMODE_GOT_IP:
+			os_printf("Have got IP!!\n");
+			mytcp_server(9988, mytcp_listen);
+			user_udp_sent_cb();
+			user_udp_send();
+			break;
+		defaut: 
+			os_printf("Have'n got IP\n");
+			break;
+	}
+}
+
 void ICACHE_FLASH_ATTR 
 user_init(void)
 {
 	//	set wifi station  mode
 	user_set_station_config();
-//	set wifi connect ap callback;
-//	wifi_set_event_handler_cb(wifi_handle_even_cb);
+	wifi_set_event_handler_cb(wifi_handle_even_cb);
 	
 	// start tcp server
-	mytcp_server(9988, mytcp_listen);
+//	mytcp_server(9988, mytcp_listen);
 	
 	os_delay_us(1000);
 
@@ -257,5 +266,8 @@ user_init(void)
 	ETS_GPIO_INTR_ATTACH(&gpio_intr_handler, NULL);
 	gpio_pin_intr_state_set(GPIO_ID_PIN(0), GPIO_PIN_INTR_NEGEDGE);
 	ETS_GPIO_INTR_ENABLE();
+
+	// start udp client
+//	user_udp_sent_cb();
 	return;
 }
