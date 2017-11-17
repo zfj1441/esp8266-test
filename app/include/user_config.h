@@ -7,8 +7,8 @@
 #define USE_OPTIMIZE_PRINTF
 
 #if ESP_PLATFORM
-#define PLUG_DEVICE             1
-#define LIGHT_DEVICE            0
+#define PLUG_DEVICE             0
+#define LIGHT_DEVICE            1
 #define SENSOR_DEVICE			0
 
 #if SENSOR_DEVICE
@@ -29,11 +29,8 @@
 //#define SOFTAP_ENCRYPT
 
 #ifdef SOFTAP_ENCRYPT
-#define PASSWORD	"zfj1441520"
+#define PASSWORD	"v*%W>L<@i&Nxe!"
 #endif
-// add by vr7jj 20170722
-#define SSID		"zfj1441"
-#define PASSWORD	"zfj1441520"
 
 #if SENSOR_DEVICE
 #define SENSOR_DEEP_SLEEP

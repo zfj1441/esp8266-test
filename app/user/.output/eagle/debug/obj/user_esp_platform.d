@@ -11,5 +11,5 @@
  ../../include/os_type.h ../../include/ip_addr.h ../../include/queue.h \
  ../../include/spi_flash.h ../../include/espconn.h \
  ../include/user_esp_platform.h ../include/user_iot_version.h \
- ../include/user_config.h ../../include/upgrade.h ../include/user_plug.h \
- ../include/driver/key.h ../../include/gpio.h
+ ../include/user_config.h ../../include/upgrade.h ../include/user_light.h \
+ ../../include/pwm.h

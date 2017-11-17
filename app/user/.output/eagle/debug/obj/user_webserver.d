@@ -14,4 +14,5 @@
  ../../include/json/jsonparse.h ../../include/c_types.h \
  ../../include/json/json.h ../../include/json/jsontree.h \
  ../include/user_webserver.h ../../include/upgrade.h \
- ../include/user_esp_platform.h
+ ../include/user_esp_platform.h ../include/user_light.h \
+ ../../include/pwm.h
