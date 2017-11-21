@@ -1,15 +1,21 @@
 /*
- * user_wifi.h
+ * wifi.h
  *
- *  Created on: 2017Äê7ÔÂ4ÈÕ
- *      Author: Administrator
+ *  Created on: Dec 30, 2014
+ *      Author: Minh
  */
 
 #ifndef _USER_WIFI_H_
 #define _USER_WIFI_H_
 
-extern void user_set_station_config(u8* ssid, u8* password);
-extern void user_wifi_init(void);
+#include "os_type.h"
 
+
+extern void wifi_connect(void);
+
+extern void wifi_status_led_init(void);
+extern void user_smartconfig_led_timer_init(void);
+extern void user_smartconfig_led_timer_stop(void);
+extern u32 get_station_ip(void);
 
 #endif /* _USER_WIFI_H_ */

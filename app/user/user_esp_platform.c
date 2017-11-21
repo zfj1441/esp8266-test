@@ -450,7 +450,7 @@ user_esp_platform_discon_cb(void *arg)
     pespconn->proto.tcp->local_port = espconn_port();
 
 #if (PLUG_DEVICE || SENSOR_DEVICE)
-    user_link_led_output(1);
+//    user_link_led_output(1);
 #endif
 
 #if SENSOR_DEVICE
@@ -495,7 +495,7 @@ user_esp_platform_discon(struct espconn *pespconn)
     ESP_DBG("user_esp_platform_discon\n");
 
 #if (PLUG_DEVICE || SENSOR_DEVICE)
-    user_link_led_output(1);
+//    user_link_led_output(1);
 #endif
 
 #ifdef CLIENT_SSL_ENABLE
@@ -1015,7 +1015,7 @@ user_esp_platform_recon_cb(void *arg, sint8 err)
 #endif
 
 #if (PLUG_DEVICE || SENSOR_DEVICE)
-    user_link_led_output(1);
+//    user_link_led_output(1);
 #endif
 
     if (++device_recon_count == 5) {
@@ -1068,7 +1068,7 @@ user_esp_platform_connect_cb(void *arg)
     }
 
 #if (PLUG_DEVICE || SENSOR_DEVICE)
-    user_link_led_timer_done();
+//    user_link_led_timer_done();
 #endif
     device_recon_count = 0;
     espconn_regist_recvcb(pespconn, user_esp_platform_recv_cb);
@@ -1218,7 +1218,7 @@ user_esp_platform_check_ip(uint8 reset_flag)
 
     if (wifi_station_get_connect_status() == STATION_GOT_IP && ipconfig.ip.addr != 0) {
 #if (PLUG_DEVICE || SENSOR_DEVICE)
-        user_link_led_timer_init();
+//        user_link_led_timer_init();
 #endif
 
 //***************************
@@ -1368,7 +1368,6 @@ user_esp_platform_init(void)
     }
 #endif
 	// 系统初始化完成后才能进行WiFi连接
-	user_wifi_init();
 	wifi_station_disconnect();
 	wifi_station_connect();
 

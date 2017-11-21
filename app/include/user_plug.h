@@ -11,10 +11,16 @@
 
 #define PLUG_KEY_NUM            1
 
+/* 
 #define PLUG_KEY_0_IO_MUX     PERIPHS_IO_MUX_MTCK_U
 #define PLUG_KEY_0_IO_NUM     13
 #define PLUG_KEY_0_IO_FUNC    FUNC_GPIO13
+*/
+#define PLUG_KEY_0_IO_MUX     PERIPHS_IO_MUX_GPIO0_U
+#define PLUG_KEY_0_IO_NUM     0
+#define PLUG_KEY_0_IO_FUNC    FUNC_GPIO0
 
+/* modify by zfj 20171121 
 #define PLUG_WIFI_LED_IO_MUX     PERIPHS_IO_MUX_GPIO0_U
 #define PLUG_WIFI_LED_IO_NUM     0
 #define PLUG_WIFI_LED_IO_FUNC    FUNC_GPIO0
@@ -22,6 +28,7 @@
 #define PLUG_LINK_LED_IO_MUX     PERIPHS_IO_MUX_MTDI_U
 #define PLUG_LINK_LED_IO_NUM     12
 #define PLUG_LINK_LED_IO_FUNC    FUNC_GPIO12
+*/
 
 /* modify by zfj 20171118
 #define PLUG_RELAY_LED_IO_MUX     PERIPHS_IO_MUX_MTDO_U

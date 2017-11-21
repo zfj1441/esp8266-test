@@ -16,6 +16,8 @@
 
 #include "user_plug.h"
 
+#include "user_wifi.h"
+
 #if PLUG_DEVICE
 
 LOCAL struct plug_saved_param plug_param;
@@ -82,10 +84,13 @@ LOCAL void ICACHE_FLASH_ATTR
 user_plug_long_press(void)
 {
 	user_esp_platform_set_active(0);
-    system_restore();
-    system_restart();
+	wifi_connect();
+//    system_restore();
+//    system_restart();
 }
 
+#if 0
+modify by zfj 20171121 不使用led提示灯
 LOCAL void ICACHE_FLASH_ATTR
 user_link_led_init(void)
 {
@@ -121,6 +126,7 @@ user_link_led_timer_done(void)
     os_timer_disarm(&link_led_timer);
     GPIO_OUTPUT_SET(GPIO_ID_PIN(PLUG_LINK_LED_IO_NUM), 0);
 }
+#endif
 
 /******************************************************************************
  * FunctionName : user_plug_init
@@ -131,9 +137,11 @@ user_link_led_timer_done(void)
 void ICACHE_FLASH_ATTR
 user_plug_init(void)
 {
-    user_link_led_init();
+//    user_link_led_init();
 
+/* modify by zfj 20171121 esp8266-01 不使用wifi LED
     wifi_status_led_install(PLUG_WIFI_LED_IO_NUM, PLUG_WIFI_LED_IO_MUX, PLUG_WIFI_LED_IO_FUNC);
+*/
 
     single_key[0] = key_init_single(PLUG_KEY_0_IO_NUM, PLUG_KEY_0_IO_MUX, PLUG_KEY_0_IO_FUNC,
                                     user_plug_long_press, user_plug_short_press);
