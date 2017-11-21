@@ -7,8 +7,8 @@
 #define USE_OPTIMIZE_PRINTF
 
 #if ESP_PLATFORM
-#define PLUG_DEVICE             0
-#define LIGHT_DEVICE            1
+#define PLUG_DEVICE             1
+#define LIGHT_DEVICE            0
 #define SENSOR_DEVICE			0
 
 #if SENSOR_DEVICE
@@ -31,6 +31,8 @@
 #ifdef SOFTAP_ENCRYPT
 #define PASSWORD	"v*%W>L<@i&Nxe!"
 #endif
+#define WIFI_SSID       "zfj1441"
+#define WIFI_PASSWORD   "zfj1441520"
 
 #if SENSOR_DEVICE
 #define SENSOR_DEEP_SLEEP

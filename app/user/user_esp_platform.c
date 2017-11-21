@@ -20,6 +20,8 @@
 #include "user_iot_version.h"
 #include "upgrade.h"
 
+#include "user_wifi.h"
+
 #if ESP_PLATFORM
 
 #define ESP_DEBUG
@@ -1299,7 +1301,7 @@ user_esp_platform_init(void)
 		os_printf("epc1=0x%08x, epc2=0x%08x, epc3=0x%08x, excvaddr=0x%08x, depc=0x%08x\n",
 				rtc_info->epc1, rtc_info->epc2, rtc_info->epc3, rtc_info->excvaddr, rtc_info->depc);
 	}
-
+#if 0
 	/***add by tzx for saving ip_info to avoid dhcp_client start****/
     struct dhcp_client_info dhcp_info;
     struct ip_info sta_info;
@@ -1324,7 +1326,7 @@ user_esp_platform_init(void)
     wifi_station_ap_number_set(AP_CACHE_NUMBER);
 #endif
 
-#if 0
+//#if 0
     {
         char sofap_mac[6] = {0x16, 0x34, 0x56, 0x78, 0x90, 0xab};
         char sta_mac[6] = {0x12, 0x34, 0x56, 0x78, 0x90, 0xab};
@@ -1343,7 +1345,7 @@ user_esp_platform_init(void)
         IP4_ADDR(&info.netmask, 255, 255, 255, 0);
         wifi_set_ip_info(SOFTAP_IF, &info);
     }
-#endif
+//#endif
 
     if (esp_param.activeflag != 1) {
 #ifdef SOFTAP_ENCRYPT
@@ -1364,6 +1366,11 @@ user_esp_platform_init(void)
 
         wifi_set_opmode(STATIONAP_MODE);
     }
+#endif
+	// 系统初始化完成后才能进行WiFi连接
+	user_wifi_init();
+	wifi_station_disconnect();
+	wifi_station_connect();
 
 #if PLUG_DEVICE
     user_plug_init();

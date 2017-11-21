@@ -205,9 +205,11 @@ LOCAL int ICACHE_FLASH_ATTR
 status_get(struct jsontree_context *js_ctx)
 {
     if (user_plug_get_status() == 1) {
-        jsontree_write_int(js_ctx, 1);
+//        jsontree_write_int(js_ctx, 1);
+        jsontree_write_string(js_ctx, "true");
     } else {
-        jsontree_write_int(js_ctx, 0);
+//        jsontree_write_int(js_ctx, 0);
+        jsontree_write_string(js_ctx, "false");
     }
 
     return 0;
@@ -229,9 +231,16 @@ status_set(struct jsontree_context *js_ctx, struct jsonparse_state *parser)
         if (type == JSON_TYPE_PAIR_NAME) {
             if (jsonparse_strcmp_value(parser, "status") == 0) {
                 uint8 status;
+				char buffer[64];
                 jsonparse_next(parser);
                 jsonparse_next(parser);
-                status = jsonparse_get_value_as_int(parser);
+//                status = jsonparse_get_value_as_int(parser);
+				if(jsonparse_strcmp_value(parser, "true") == 0)
+					status = 1;
+				else if(jsonparse_strcmp_value(parser, "false") == 0)
+					status = 0;
+				else
+					status = 0;
                 user_plug_set_status(status);
             }
         }
